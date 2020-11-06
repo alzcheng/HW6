@@ -1,18 +1,60 @@
 var requestURL = "https://api.openweathermap.org/data/2.5/weather?q=atlanta&appid=d3704233aa04b4a5db706d0f4fce1f31"
 
 var searchBtn = $(".searchBtn");
-searchBtn.on("click", showCityWeather);
+var cityHistory = [{ city: "" }];
+console.log(cityHistory)
+window.localStorage.setItem("searchHistory", JSON.stringify(cityHistory));
 
-function showCityWeather(e) {
+searchBtn.on("click", function (e) {
     e.preventDefault();
     var cityName = $("#searchCity").val();
+    showCityWeather(cityName);
+});
+
+$(".searchItem").on("click", function (e) {
+    e.preventDefault();
+    var cityName = $(this).text();
+    showCityWeather(cityName);
+});
+
+function addCityHistory(cityName) {
+    var searchHistory = JSON.parse(localStorage.getItem("searchHistory"));
+    var historyDisplay = $(".searchItem");
+    var searchedCity = { city: cityName };
+
+    if (searchHistory[0].city === "") {
+        searchHistory[0].city = cityName;
+    } else {
+        searchHistory.unshift(searchedCity);
+    }
+
+    if (searchHistory.length > 8) {
+        searchHistory.pop();
+    }
+
+    console.log(historyDisplay.length);
+    for (i = 0; i < searchHistory.length; i++) {
+        $(historyDisplay[i]).text(searchHistory[i].city);
+    };
+
+    localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
+
+}
+
+function showCityWeather(cityName) {
+    //e.preventDefault();
+    //var cityName = $("#searchCity").val();
     var requestURL = "https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&units=imperial&appid=d3704233aa04b4a5db706d0f4fce1f31";
+
+    addCityHistory(cityName);
 
     fetch(requestURL)
         .then(function (response) {
+            console.log(response.status);
             return response.json();
         })
         .then(function (city) {
+            console.log(city)
             var cityTemperature = Number.parseFloat(city.main.temp).toFixed(1);
             var longitude = city.coord.lon;
             var latitude = city.coord.lat;
@@ -31,30 +73,19 @@ function showCityWeather(e) {
             $(".titleIcon").attr("src", "http://openweathermap.org/img/wn/" + city.weather[0].icon + "@2x.png")
             // showUVIndex(latitude, longitude)
             showCityForecast(latitude, longitude);
+        }).catch(function (error) {
+            alert("Not a valid city");
         });
 
 }
 
 function showDate(dt) {
-    var myDate = new Date(Date(dt));
+    var myDate = new Date(dt * 1000);
     var date = myDate.getDate();
     var month = myDate.getMonth() + 1;
     var year = myDate.getFullYear();
     return String(month) + "/" + String(date) + "/" + String(year);
 }
-
-// function showUVIndex(lat, lon) {
-//     var requestURL = "http://api.openweathermap.org/data/2.5/uvi?lat=" + lat + "&lon=" + lon + "&appid=d3704233aa04b4a5db706d0f4fce1f31"
-
-//     fetch(requestURL)
-//         .then(function (response) {
-//             return response.json();
-//         })
-//         .then(function (data) {
-//             console.log(data);
-//         });
-
-// }
 
 function showCityForecast(lat, lon) {
     var requestURL = "https://api.openweathermap.org/data/2.5/onecall?lat=" + lat + "&lon=" + lon + "&exclude=minutely,hourly,alerts&units=imperial&appid=d3704233aa04b4a5db706d0f4fce1f31"
@@ -62,12 +93,20 @@ function showCityForecast(lat, lon) {
         .then(function (response) {
             return response.json();
         })
-        .then(function (data) {
-            console.log(data);
+        .then(function (cityWeather) {
+            var cityCurrentUVI = cityWeather.current.uvi;
+            var forecastDates = $(".forecastDate");
+            var forecastIcons = $(".forecastIcon");
+            var forecastTemps = $(".forecastTemp");
+            var forecastHumidities = $(".forecastHumidity");
+
+            $(".cityUVIndex").text("UV Index: " + cityCurrentUVI);
+
+            for (i = 0; i < forecastDates.length; i++) {
+                $(forecastDates[i]).text(showDate(cityWeather.daily[i].dt));
+                $(forecastIcons[i]).attr("src", "http://openweathermap.org/img/wn/" + cityWeather.daily[i].weather[0].icon + "@2x.png");
+                $(forecastTemps[i]).text("Temp: " + String(Number.parseFloat((cityWeather.daily[i].temp.max + cityWeather.daily[i].temp.min) / 2).toFixed(1)) + " " + String.fromCharCode(176) + "F");
+                $(forecastHumidities[i]).text("Humidity: " + cityWeather.daily[i].humidity + "%");
+            }
         });
 }
-
-
-
-
-
