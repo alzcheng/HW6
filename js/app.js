@@ -136,7 +136,6 @@ function showCityWeather(cityName) {
             alert("Not a valid city");
             $("#searchCity").val('');
         });
-
 }
 
 //When clicking the search button, use the city name in the search to generate result
