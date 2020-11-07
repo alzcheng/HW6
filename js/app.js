@@ -8,31 +8,21 @@ window.localStorage.setItem("searchHistory", JSON.stringify(cityHistory));
 $(".searchBtn").on("click", function (e) {
     e.preventDefault();
     var cityName = $("#searchCity").val();
-    if (firstClick) {
-        initializeCards();
-    }
-    addCityHistory(cityName);
+
+    // addCityHistory(cityName);
     showCityWeather(cityName);
-    console.log($(".searchItems"))
-    console.log($($(".searchItems")[0]).text())
-    // document.querySelector(".searchItems").addEventListener("click", function () {
-    //     console.log("clicked on searchItem")
-    // })
 });
 
-if ($(".searchItems") != null) {
-    $(".searchItems").on("click", function (e) {
-        e.preventDefault();
-        console.log(".searchItem");
-        var cityName = $(this).text();
-        addCityHistory(cityName);
-        showCityWeather(cityName);
-    });
-}
 
+$(".searchList").on("click", ".searchItems", function (e) {
+    e.preventDefault();
+    var cityName = $(this).text();
+    // addCityHistory(cityName);
+    showCityWeather(cityName);
+});
 
 function initializeCards() {
-    $(".mainBodyCard").append('<ul><h4 class="card-title cityTitleName"></h4><img class="titleIcon" src="" alt="icon not found"><p class="card-text cityTemp"></p><p class="card-text cityHumidity"></p><p class="card-text cityWindSpeed"></p><p class="card-text cityUVIndex"></p></ul>');
+    $(".mainCardCol").append('<div class="card main-card"><div class="card-body main-body-card"><ul><h4 class="card-title cityTitleName"></h4><img class="titleIcon" src="" alt="icon not found"><p class="card-text cityTemp"></p><p class="card-text cityHumidity"></p><p class="card-text cityWindSpeed"></p><p class="card-text cityUVIndex"></p></ul></div></div>');
     $(".searchListGroup").append('<div class="card search-history"><ul class="list-group list-group-flush searchList"></ul></div>');
     $(".forecastTitle").append('<h3>5-Day Forecast: </h3>')
     for (i = 0; i < 5; i++) {
@@ -89,22 +79,19 @@ function showCityWeather(cityName) {
             var longitude = city.coord.lon;
             var latitude = city.coord.lat;
             var currentDate = showDate(city.dt)
-            console.log(currentDate);
-            // console.log(date);
-            // console.log(month);
-            // console.log(year);
-            console.log(longitude);
-            console.log(latitude);
-            console.log(city.weather[0].icon)
+            if (firstClick) {
+                initializeCards();
+            }
             $(".cityTitleName").text(city.name + " (" + currentDate + ")");
             $(".cityTemp").text("Temperature: " + cityTemperature.toString() + " " + String.fromCharCode(176) + "F");
             $(".cityHumidity").text("Humidity: " + city.main.humidity + "%");
             $(".cityWindSpeed").text("Wind Speed: " + city.wind.speed + " MPH");
             $(".titleIcon").attr("src", "http://openweathermap.org/img/wn/" + city.weather[0].icon + "@2x.png")
-            // showUVIndex(latitude, longitude)
+            addCityHistory(cityName);
             showCityForecast(latitude, longitude);
         }).catch(function (error) {
             alert("Not a valid city");
+            $("#searchCity").val('');
         });
 
 }
