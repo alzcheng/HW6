@@ -1,15 +1,12 @@
 var requestURL = "https://api.openweathermap.org/data/2.5/weather?q=atlanta&appid=d3704233aa04b4a5db706d0f4fce1f31"
-
 var cityHistory = [{ city: "" }];
 var historyCount = 0;
 var firstClick = true;
-window.localStorage.setItem("searchHistory", JSON.stringify(cityHistory));
+localStorage.setItem("searchHistory", JSON.stringify(cityHistory));
 
 $(".searchBtn").on("click", function (e) {
     e.preventDefault();
     var cityName = $("#searchCity").val();
-
-    // addCityHistory(cityName);
     showCityWeather(cityName);
 });
 
@@ -17,7 +14,6 @@ $(".searchBtn").on("click", function (e) {
 $(".searchList").on("click", ".searchItems", function (e) {
     e.preventDefault();
     var cityName = $(this).text();
-    // addCityHistory(cityName);
     showCityWeather(cityName);
 });
 
@@ -34,7 +30,6 @@ function initializeCards() {
 function addCityHistory(cityName) {
     var searchHistory = JSON.parse(localStorage.getItem("searchHistory"));
     var historyDisplay = $(".searchItems");
-    console.log(historyDisplay);
     var searchedCity = { city: cityName };
 
     if (searchHistory[0].city === "") {
@@ -51,7 +46,6 @@ function addCityHistory(cityName) {
             searchHistory.unshift(searchedCity);
             searchHistory.pop();
         }
-
     }
 
     if (historyCount === 8) {
@@ -70,11 +64,9 @@ function showCityWeather(cityName) {
 
     fetch(requestURL)
         .then(function (response) {
-            console.log(response.status);
             return response.json();
         })
         .then(function (city) {
-            console.log(city)
             var cityTemperature = Number.parseFloat(city.main.temp).toFixed(1);
             var longitude = city.coord.lon;
             var latitude = city.coord.lat;
