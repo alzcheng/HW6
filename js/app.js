@@ -1,52 +1,67 @@
 var requestURL = "https://api.openweathermap.org/data/2.5/weather?q=atlanta&appid=d3704233aa04b4a5db706d0f4fce1f31"
 
-var searchBtn = $(".searchBtn");
 var cityHistory = [{ city: "" }];
-console.log(cityHistory)
+var historyCount = 0;
+var firstClick = true;
 window.localStorage.setItem("searchHistory", JSON.stringify(cityHistory));
 
-searchBtn.on("click", function (e) {
+$(".searchBtn").on("click", function (e) {
     e.preventDefault();
     var cityName = $("#searchCity").val();
+    addCityHistory(cityName);
     showCityWeather(cityName);
+    console.log($(".searchItem"))
 });
 
-$(".searchItem").on("click", function (e) {
+
+$(".searchItems").on("click", function (e) {
     e.preventDefault();
-    var cityName = $(this).text();
-    showCityWeather(cityName);
+    console.log("clicked on searchItem")
+    // console.log($(".searchItem"));
+    // var cityName = $(this).text();
+    // addCityHistory(cityName);
+    // showCityWeather(cityName);
 });
 
 function addCityHistory(cityName) {
     var searchHistory = JSON.parse(localStorage.getItem("searchHistory"));
-    var historyDisplay = $(".searchItem");
+    var historyDisplay = $(".searchItems");
+    console.log(historyDisplay);
     var searchedCity = { city: cityName };
 
     if (searchHistory[0].city === "") {
         searchHistory[0].city = cityName;
+        $(".searchList").append('<li class="list-group-item searchItems">' + cityName + '</li>')
+        historyCount++;
+
     } else {
-        searchHistory.unshift(searchedCity);
+        if (historyCount < 8) {
+            searchHistory.unshift(searchedCity);
+            $(".searchList").prepend('<li class="list-group-item searchItems">' + cityName + '</li>')
+            historyCount++;
+        } else {
+            searchHistory.unshift(searchedCity);
+        }
+
     }
 
     if (searchHistory.length > 8) {
         searchHistory.pop();
     }
 
-    console.log(historyDisplay.length);
-    for (i = 0; i < searchHistory.length; i++) {
-        $(historyDisplay[i]).text(searchHistory[i].city);
-    };
+    if (historyCount === 8) {
+        for (i = 0; i < searchHistory.length; i++) {
+            $(historyDisplay[i]).text(searchHistory[i].city);
+        };
+    }
+
 
     localStorage.setItem("searchHistory", JSON.stringify(searchHistory));
 
 }
 
 function showCityWeather(cityName) {
-    //e.preventDefault();
-    //var cityName = $("#searchCity").val();
     var requestURL = "https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&units=imperial&appid=d3704233aa04b4a5db706d0f4fce1f31";
-
-    addCityHistory(cityName);
 
     fetch(requestURL)
         .then(function (response) {
@@ -103,10 +118,10 @@ function showCityForecast(lat, lon) {
             $(".cityUVIndex").text("UV Index: " + cityCurrentUVI);
 
             for (i = 0; i < forecastDates.length; i++) {
-                $(forecastDates[i]).text(showDate(cityWeather.daily[i].dt));
-                $(forecastIcons[i]).attr("src", "http://openweathermap.org/img/wn/" + cityWeather.daily[i].weather[0].icon + "@2x.png");
-                $(forecastTemps[i]).text("Temp: " + String(Number.parseFloat((cityWeather.daily[i].temp.max + cityWeather.daily[i].temp.min) / 2).toFixed(1)) + " " + String.fromCharCode(176) + "F");
-                $(forecastHumidities[i]).text("Humidity: " + cityWeather.daily[i].humidity + "%");
+                $(forecastDates[i]).text(showDate(cityWeather.daily[i + 1].dt));
+                $(forecastIcons[i]).attr("src", "http://openweathermap.org/img/wn/" + cityWeather.daily[i + 1].weather[0].icon + "@2x.png");
+                $(forecastTemps[i]).text("Temp: " + String(Number.parseFloat((cityWeather.daily[i + 1].temp.max + cityWeather.daily[i + 1].temp.min) / 2).toFixed(1)) + " " + String.fromCharCode(176) + "F");
+                $(forecastHumidities[i]).text("Humidity: " + cityWeather.daily[i + 1].humidity + "%");
             }
         });
 }
