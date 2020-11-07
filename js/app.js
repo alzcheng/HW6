@@ -14,26 +14,33 @@ $(".searchBtn").on("click", function (e) {
     addCityHistory(cityName);
     showCityWeather(cityName);
     console.log($(".searchItems"))
+    console.log($($(".searchItems")[0]).text())
+    // document.querySelector(".searchItems").addEventListener("click", function () {
+    //     console.log("clicked on searchItem")
+    // })
 });
 
+if ($(".searchItems") != null) {
+    $(".searchItems").on("click", function (e) {
+        e.preventDefault();
+        console.log(".searchItem");
+        var cityName = $(this).text();
+        addCityHistory(cityName);
+        showCityWeather(cityName);
+    });
+}
 
-$(".searchItems").on("click", function (e) {
-    e.preventDefault();
-    console.log("clicked on searchItem")
-    // console.log($(".searchItem"));
-    // var cityName = $(this).text();
-    // addCityHistory(cityName);
-    // showCityWeather(cityName);
-});
 
 function initializeCards() {
-    $(".mainBodyCard").append('<ul><li><h5 class="card-title cityTitleName"></h5><img class="titleIcon" src="" alt=""></li><li><p class="card-text cityTemp"></p></li><li><p class="card-text cityHumidity"></p></li><li><p class="card-text cityWindSpeed"></p></li><li><p class="card-text cityUVIndex"></p></li></ul>');
+    $(".mainBodyCard").append('<ul><h4 class="card-title cityTitleName"></h4><img class="titleIcon" src="" alt="icon not found"><p class="card-text cityTemp"></p><p class="card-text cityHumidity"></p><p class="card-text cityWindSpeed"></p><p class="card-text cityUVIndex"></p></ul>');
+    $(".searchListGroup").append('<div class="card search-history"><ul class="list-group list-group-flush searchList"></ul></div>');
     $(".forecastTitle").append('<h3>5-Day Forecast: </h3>')
     for (i = 0; i < 5; i++) {
         $(".forecastCards").append('<div class="card forecastCard"><div class="card-body"><h5 class="card-title forecastDate"></h5><img class="forecastIcon" src="" alt=""><p class="card-text forecastTemp"></p><p class="card-text forecastHumidity"></p></div></div>');
     }
     firstClick = false;
 }
+
 function addCityHistory(cityName) {
     var searchHistory = JSON.parse(localStorage.getItem("searchHistory"));
     var historyDisplay = $(".searchItems");
@@ -123,8 +130,8 @@ function showCityForecast(lat, lon) {
             var forecastTemps = $(".forecastTemp");
             var forecastHumidities = $(".forecastHumidity");
 
-            $(".cityUVIndex").text("UV Index: " + cityCurrentUVI);
-
+            $(".cityUVIndex").html('UV Index: <span class="UV-indicator">' + cityCurrentUVI + '</span>');
+            $(".UV-indictor").text(cityCurrentUVI);
             for (i = 0; i < forecastDates.length; i++) {
                 $(forecastDates[i]).text(showDate(cityWeather.daily[i + 1].dt));
                 $(forecastIcons[i]).attr("src", "http://openweathermap.org/img/wn/" + cityWeather.daily[i + 1].weather[0].icon + "@2x.png");
