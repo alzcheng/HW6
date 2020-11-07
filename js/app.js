@@ -124,14 +124,20 @@ function showCityForecast(lat, lon) {
             return response.json();
         })
         .then(function (cityWeather) {
-            var cityCurrentUVI = cityWeather.current.uvi;
+            var cityCurrentUVI = Number.parseFloat(cityWeather.current.uvi);
             var forecastDates = $(".forecastDate");
             var forecastIcons = $(".forecastIcon");
             var forecastTemps = $(".forecastTemp");
             var forecastHumidities = $(".forecastHumidity");
 
-            $(".cityUVIndex").html('UV Index: <span class="UV-indicator">' + cityCurrentUVI + '</span>');
-            $(".UV-indictor").text(cityCurrentUVI);
+            if (cityCurrentUVI <= 3) {
+                $(".cityUVIndex").html('UV Index: <span class="UV-favorable">' + cityCurrentUVI + '</span>');
+            } else if (cityCurrentUVI <= 7) {
+                $(".cityUVIndex").html('UV Index: <span class="UV-moderate">' + cityCurrentUVI + '</span>');
+            } else {
+                $(".cityUVIndex").html('UV Index: <span class="UV-severe">' + cityCurrentUVI + '</span>');
+            }
+
             for (i = 0; i < forecastDates.length; i++) {
                 $(forecastDates[i]).text(showDate(cityWeather.daily[i + 1].dt));
                 $(forecastIcons[i]).attr("src", "http://openweathermap.org/img/wn/" + cityWeather.daily[i + 1].weather[0].icon + "@2x.png");

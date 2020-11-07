@@ -63,6 +63,21 @@
     margin-bottom: 20px; 
 }
 
-.UV-indicator{
-    padding: 10x; 
+
+.UV-favorable{
+    background-color: green;
+    padding: 5px; 
+    color: white
+}
+
+.UV-moderate{
+    background-color: orange;
+    padding: 5px; 
+    color: white
+}
+
+.UV-severe{
+    background-color: red;
+    padding: 5px; 
+    color: white
 }
