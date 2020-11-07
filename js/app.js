@@ -8,9 +8,12 @@ window.localStorage.setItem("searchHistory", JSON.stringify(cityHistory));
 $(".searchBtn").on("click", function (e) {
     e.preventDefault();
     var cityName = $("#searchCity").val();
+    if (firstClick) {
+        initializeCards();
+    }
     addCityHistory(cityName);
     showCityWeather(cityName);
-    console.log($(".searchItem"))
+    console.log($(".searchItems"))
 });
 
 
@@ -23,6 +26,14 @@ $(".searchItems").on("click", function (e) {
     // showCityWeather(cityName);
 });
 
+function initializeCards() {
+    $(".mainBodyCard").append('<ul><li><h5 class="card-title cityTitleName"></h5><img class="titleIcon" src="" alt=""></li><li><p class="card-text cityTemp"></p></li><li><p class="card-text cityHumidity"></p></li><li><p class="card-text cityWindSpeed"></p></li><li><p class="card-text cityUVIndex"></p></li></ul>');
+    $(".forecastTitle").append('<h3>5-Day Forecast: </h3>')
+    for (i = 0; i < 5; i++) {
+        $(".forecastCards").append('<div class="card forecastCard"><div class="card-body"><h5 class="card-title forecastDate"></h5><img class="forecastIcon" src="" alt=""><p class="card-text forecastTemp"></p><p class="card-text forecastHumidity"></p></div></div>');
+    }
+    firstClick = false;
+}
 function addCityHistory(cityName) {
     var searchHistory = JSON.parse(localStorage.getItem("searchHistory"));
     var historyDisplay = $(".searchItems");
@@ -41,12 +52,9 @@ function addCityHistory(cityName) {
             historyCount++;
         } else {
             searchHistory.unshift(searchedCity);
+            searchHistory.pop();
         }
 
-    }
-
-    if (searchHistory.length > 8) {
-        searchHistory.pop();
     }
 
     if (historyCount === 8) {

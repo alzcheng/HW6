@@ -17,3 +17,12 @@
     margin-left: auto;
     margin-right: auto;
 }
+
+.forecastCard{
+    width: 15rem; 
+    background-color: blue; 
+    color: white; 
+    float: left;
+    margin-right: 5px; 
+    margin-bottom: 10px;
+}
