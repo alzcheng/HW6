@@ -1,4 +1,4 @@
-# 06 Server-Side APIs: Weather Dashboard
+# HW6 Server-Side APIs: Weather Dashboard
 
 ## The Application
 
@@ -39,4 +39,4 @@ When a city is searched on the dashboard, the following information is displayed
 2. Using fetch to call functions to ensure asynchronous functions
 
 ## Link to finished product website
-[Link to finished product](https://alzcheng.github.io/HW6/)
+[Link to finished product](https://alzcheng.github.io/weatherDashboard/)
